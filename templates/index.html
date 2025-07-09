@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Client Call Audio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('{{ url_for('static', filename='background.webp') }}') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.35);
+      z-index: -1;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -2;
+      display: none;
+    }
+
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.08);
+      z-index: -1;
+      pointer-events: none;
+      display: none;
+    }
+
+    .upload-wrapper {
+      background-color: #ffffff;
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .upload-wrapper:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    }
+
+    .illustration {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    .upload-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 18px;
+      fill: #007BFF;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    .subtext {
+      font-size: 14px;
+      color: #5a6675;
+      margin-bottom: 28px;
+      animation: fadeIn 1s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    input[type="file"] {
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #cfd8e3;
+      background-color: #f4f7fa;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="file"]:hover {
+      border-color: #007BFF;
+    }
+
+    button {
+      padding: 14px;
+      background: linear-gradient(135deg, #007BFF, #0056b3);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #0056b3, #003f8a);
+      transform: translateY(-2px);
+    }
+
+    .footer-text {
+      position: absolute;
+      bottom: 24px;
+      font-size: 12px;
+      color: #f0f0f0;
+      text-align: center;
+      width: 100%;
+      z-index: 2;
+    }
+
+    @media (max-width: 480px) {
+      .upload-wrapper {
+        margin: 20px;
+        padding: 32px 20px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .upload-icon {
+        width: 42px;
+        height: 42px;
+      }
+
+      .illustration {
+        max-width: 220px;
+        margin-bottom: 16px;
+      }
+
+      .subtext {
+        font-size: 13px;
+      }
+
+      button {
+        font-size: 15px;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background video (initially hidden) -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="{{ url_for('static', filename='back_vid.mp4') }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="video-overlay" id="video-overlay"></div>
+
+  <div class="upload-wrapper">
+    <img src="{{ url_for('static', filename='call_img.png') }}" alt="Call Center Illustration" class="illustration">
+
+    <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M12 16V4m0 0l-5 5m5-5l5 5M4 20h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <h1>Upload Client Call Audio</h1>
+    <p class="subtext">Please upload a client call recording to receive a detailed sentiment and conversation analysis report.</p>
+
+    <form method="POST" enctype="multipart/form-data" onsubmit="return activateVideoBackground()">
+      <input type="file" name="audio" accept="audio/*" required>
+      <button type="submit">Upload</button>
+    </form>
+  </div>
+
+  <div class="footer-text">Secure upload | AI-powered analysis | Trusted by professionals</div>
+
+  <script>
+    function activateVideoBackground() {
+      const video = document.getElementById('bg-video');
+      const overlay = document.getElementById('video-overlay');
+
+      video.style.display = 'block';
+      overlay.style.display = 'block';
+      video.play();
+
+      // Delay submission for smoother transition
+      setTimeout(() => {
+        document.querySelector('form').submit();
+      }, 500);
+
+      return false;
+    }
+  </script>
+</body>
+</html>

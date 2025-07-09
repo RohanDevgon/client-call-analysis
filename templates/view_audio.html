@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Call Analysis Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: url('{{ url_for('static', filename='background.webp') }}') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(255, 255, 255, 0.35);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #ffffffee;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      animation: fadeInUp 0.6s ease-in-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .meta { font-size: 14px; color: #6c757d; margin-bottom: 20px; }
+    audio { width: 100%; margin-bottom: 30px; }
+    .section { margin-bottom: 30px; }
+    .section h3 {
+      font-size: 20px;
+      color: #007BFF;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .transcript-box {
+      background: #f1f5f9;
+      padding: 16px;
+      border-left: 4px solid #007BFF;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #f9fbfd;
+      border-left: 4px solid #6c757d;
+      padding: 20px;
+      border-radius: 10px;
+      animation: fadeInUp 0.8s ease-in-out;
+    }
+    .detail-item { margin-bottom: 10px; }
+    .detail-item strong {
+      display: inline-block;
+      min-width: 130px;
+      color: #495057;
+    }
+    .positive { color: #28a745; font-weight: bold; }
+    .negative { color: #dc3545; font-weight: bold; }
+    .neutral  { color: #ffc107; font-weight: bold; }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 40px;
+    }
+
+    .export-buttons {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+    .export-buttons button, .home-btn {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      margin: 8px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .export-buttons button:hover, .home-btn:hover {
+      background-color: #0056b3;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 24px; }
+      .export-buttons { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="export-buttons">
+      <a href="/" class="home-btn">⬅ Back to Upload</a>
+      <button onclick="window.print()">Export as PDF</button>
+      <button onclick="downloadCSV()">Export as CSV</button>
+    </div>
+
+    <h2>Uploaded Audio</h2>
+    <div class="meta">
+      <strong>Filename:</strong> {{ audio.filename }}<br>
+      <strong>Uploaded:</strong> {{ audio.upload_time.strftime('%Y-%m-%d %H:%M:%S') if audio.upload_time else 'N/A' }}
+    </div>
+
+    <audio controls>
+      <source src="{{ url_for('static', filename=audio.filename) }}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    {% if audio.transcript %}
+      <div class="section">
+        <h3>Transcript</h3>
+        <div class="transcript-box">{{ audio.transcript }}</div>
+      </div>
+
+      <div class="section grid">
+        <div class="card">
+          <h3>Call Analysis</h3>
+          {% if audio.sentiment %}<div class="detail-item"><strong>Sentiment:</strong> <span class="{{ 'positive' if 'positive' in audio.sentiment.lower() else 'negative' if 'negative' in audio.sentiment.lower() else 'neutral' }}">{{ audio.sentiment }}</span></div>{% endif %}
+          {% if audio.emotions %}<div class="detail-item"><strong>Emotions:</strong> {{ audio.emotions }}</div>{% endif %}
+          {% if audio.satisfaction %}<div class="detail-item"><strong>Satisfaction:</strong> <span class="{{ 'positive' if 'satisfied' in audio.satisfaction.lower() else 'negative' if 'dissatisfied' in audio.satisfaction.lower() else 'neutral' }}">{{ audio.satisfaction }}</span></div>{% endif %}
+        </div>
+
+        <div class="card">
+          <h3>Call Details</h3>
+          {% if audio.customer_name %}<div class="detail-item"><strong>Customer:</strong> {{ audio.customer_name }}</div>{% endif %}
+          {% if audio.call_reason %}<div class="detail-item"><strong>Reason:</strong> {{ audio.call_reason }}</div>{% endif %}
+          {% if audio.urgency %}<div class="detail-item"><strong>Urgency:</strong> {{ audio.urgency }}</div>{% endif %}
+          {% if audio.main_issue %}<div class="detail-item"><strong>Main Issue:</strong> {{ audio.main_issue }}</div>{% endif %}
+        </div>
+
+        <div class="card">
+          <h3>Resolution</h3>
+          {% if audio.solution %}<div class="detail-item"><strong>Solution:</strong> {{ audio.solution }}</div>{% endif %}
+          {% if audio.compensation %}<div class="detail-item"><strong>Compensation:</strong> {{ audio.compensation }}</div>{% endif %}
+          {% if audio.agent_effectiveness %}<div class="detail-item"><strong>Agent Effectiveness:</strong> {{ audio.agent_effectiveness }}</div>{% endif %}
+        </div>
+
+        {% if audio.sentiment_journey %}
+        <div class="card">
+          <h3>Sentiment Journey</h3>
+          <div>{{ audio.sentiment_journey }}</div>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if audio.detailed_summary %}
+        <div class="section">
+          <h3>Summary</h3>
+          <p>{{ audio.detailed_summary }}</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="section">
+        <em>Transcript and analysis will appear here once processing is complete.</em>
+      </div>
+    {% endif %}
+
+    <div class="footer">Generated by PRESENCE AI &mdash; Semantic Call Intelligence</div>
+  </div>
+
+  <script>
+    function downloadCSV() {
+      const data = [
+        ['Field', 'Value'],
+        ['Filename', '{{ audio.filename }}'],
+        ['Uploaded', '{{ audio.upload_time.strftime('%Y-%m-%d %H:%M:%S') if audio.upload_time else 'N/A' }}'],
+        ['Customer', '{{ audio.customer_name or "" }}'],
+        ['Reason', '{{ audio.call_reason or "" }}'],
+        ['Urgency', '{{ audio.urgency or "" }}'],
+        ['Main Issue', '{{ audio.main_issue or "" }}'],
+        ['Solution', '{{ audio.solution or "" }}'],
+        ['Compensation', '{{ audio.compensation or "" }}'],
+        ['Sentiment', '{{ audio.sentiment or "" }}'],
+        ['Journey', '{{ audio.sentiment_journey or "" }}'],
+        ['Satisfaction', '{{ audio.satisfaction or "" }}'],
+        ['Agent Effectiveness', '{{ audio.agent_effectiveness or "" }}'],
+        ['Summary', '{{ audio.detailed_summary or "" }}']
+      ];
+      let csvContent = "data:text/csv;charset=utf-8," + data.map(e => e.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "call_analysis_report.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
