@@ -121,19 +121,16 @@ Visit `http://127.0.0.1:5000/` in your browser.
 
 ## 📸 Screenshots
 
-
-## 📸 Screenshots
-
 ### 🔹 Upload UI
-![Upload UI](screenshots\dashboard.png)
+![Upload UI](screenshots/dashboard.png)
 
 ### 🔹 Background Video Transition
-![Background Transition](screenshots\uploading call recording.png)
+![Background Transition](screenshots/uploading call recording.png)
 
 ### 🔹 Sentiment Analysis & Summary Display
-![Analysis Display](screenshots\analysis 1.png)
-![Analysis Display](screenshots\analysis 2.png)
-![Analysis Display](screenshots\analysis 3.png)
+![Analysis Display](screenshots/analysis 1.png)
+![Analysis Display](screenshots/analysis 2.png)
+![Analysis Display](screenshots/analysis 3.png)
 
 
 ---
