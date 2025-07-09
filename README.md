@@ -125,17 +125,17 @@ Visit `http://127.0.0.1:5000/` in your browser.
 ![Upload UI](screenshots/dashboard.png)
 
 ### 🔹 Background Video Transition
-![Background Transition](screenshots/uploading call recording.png)
+![Background Transition](screenshots/uploading%20call%20recording.png)
 
 ### 🔹 Sentiment Analysis & Summary Display
-![Analysis Display](screenshots/analysis 1.png)
-![Analysis Display](screenshots/analysis 2.png)
-![Analysis Display](screenshots/analysis 3.png)
-
+![Analysis Display 1](screenshots/analysis%201.png)
+![Analysis Display 2](screenshots/analysis%202.png)
+![Analysis Display 3](screenshots/analysis%203.png)
 
 ---
 
 ## 🧠 Author Learning & Contributions
+
 
 * Built the full-stack architecture with Flask and MySQL
 * Explored and implemented AI-driven analysis pipelines using external LLM APIs
