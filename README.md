@@ -124,15 +124,21 @@ Visit `http://127.0.0.1:5000/` in your browser.
 ### 🔹 Upload UI
 ![Upload UI](screenshots/dashboard.png)
 
-### 🔹 Background Video Transition
-![Background Transition](screenshots/uploading%20call%20recording.png)
-
 ### 🔹 Sentiment Analysis & Summary Display
 ![Analysis Display 1](screenshots/analysis%201.png)
 ![Analysis Display 2](screenshots/analysis%202.png)
 ![Analysis Display 3](screenshots/analysis%203.png)
 
 ---
+
+## 🎥 Demo
+
+[![Watch the Demo](https://img.youtube.com/vi/aWcNewcyWIo/0.jpg)](https://youtu.be/aWcNewcyWIo)
+
+> ✨ Click the image to watch a short demo of the UI transition, audio upload flow, and sentiment analysis.
+
+---
+
 
 ## 🧠 Author Learning & Contributions
 
